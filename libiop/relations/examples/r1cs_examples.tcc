@@ -20,6 +20,55 @@
 
 namespace libiop {
 
+    template<typename FieldT>
+    r1cs_example<FieldT> generate_range_proof_r1cs(const size_t bit_width, const size_t instance_num) {
+        size_t num_variables = bit_width * instance_num;
+        size_t zero_bits = bit_width / 2;
+        size_t nonzero_bits = bit_width - zero_bits;
+        r1cs_constraint_system<FieldT> cs;
+        cs.primary_input_size_ = 0;
+        cs.auxiliary_input_size_ = num_variables;
+        r1cs_variable_assignment<FieldT> variables;
+        for (size_t i = 0; i < instance_num; i++) {
+            for (size_t j = 0; j < nonzero_bits; j++) {
+                variables.push_back(FieldT(std::rand() & 1));
+            }
+            for (size_t j = nonzero_bits; j < bit_width; j++) {
+                variables.push_back(FieldT::zero());
+            }
+        }
+
+        // constraint all variables in 0/1
+        for (size_t i = 0; i < instance_num; i++) {
+            for (size_t j = 0; j < nonzero_bits; j++) {
+                size_t idx = i * instance_num + j;
+                linear_combination<FieldT> A, B, C;
+                A.add_term(idx + 1, FieldT::one());
+                B.add_term(idx + 1, FieldT::one());
+                B.add_term(0, FieldT::zero() - FieldT::one());
+                cs.add_constraint(r1cs_constraint<FieldT>(A, B, C));
+            }
+        }
+
+        for (size_t i = 0; i < instance_num; i++) {
+            for (size_t j = nonzero_bits; j < bit_width; j++) {
+                size_t idx = i * instance_num + j;
+                linear_combination<FieldT> A, B, C;
+                A.add_term(idx + 1, FieldT::one());
+                cs.add_constraint(r1cs_constraint<FieldT>(A, B, C));
+            }
+        }
+
+        assert(cs.num_variables() == num_variables);
+        assert(cs.num_inputs() == 0);
+        assert(cs.num_constraints() == num_variables);
+        r1cs_primary_input<FieldT> primary_input;
+        r1cs_primary_input<FieldT> auxiliary_input = variables;
+        assert(cs.is_satisfied(primary_input, auxiliary_input));
+
+        return r1cs_example<FieldT>(std::move(cs), std::move(primary_input), std::move(auxiliary_input));
+    }
+
 template<typename FieldT>
 r1cs_example<FieldT> generate_r1cs_example(const size_t num_constraints,
                                            const size_t num_inputs,

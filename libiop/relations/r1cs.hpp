@@ -158,6 +158,7 @@ r1cs_variable_assignment<FieldT> variable_assignment_from_inputs(const r1cs_prim
 
 } // libiop
 
+
 #include <libiop/relations/r1cs.tcc>
 
 #endif // LIBIOP_RELATIONS_R1CS_HPP_

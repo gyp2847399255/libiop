@@ -69,7 +69,7 @@ TEST(AuroraSnarkMultiplicativeTest, SimpleTest) {
     typedef libff::edwards_Fr FieldT;
     typedef binary_hash_digest hash_type;
 
-    const size_t num_constraints = 1 << 13;
+    const size_t num_constraints = (1 << 13);
     const size_t num_inputs = (1 << 5) - 1;
     const size_t num_variables = (1 << 13) - 1;
     const size_t security_parameter = 128;
