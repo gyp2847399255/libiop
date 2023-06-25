@@ -8,7 +8,7 @@ namespace libiop {
 template<typename T>
 std::vector<T> all_subset_sums(const std::vector<T> &basis, const T& shift)
 {
-    const size_t m = basis.size();
+    const std::size_t m = basis.size();
     std::vector<T> result;
     /* as we are I/O-bound here, reserve + emplace_back is ~2x faster
        then pre-initializing with zero and then overwriting (as per
@@ -17,10 +17,10 @@ std::vector<T> all_subset_sums(const std::vector<T> &basis, const T& shift)
 
     result.emplace_back(shift);
 
-    for (size_t i = 0; i < m; ++i)
+    for (std::size_t i = 0; i < m; ++i)
     {
-        const size_t l = (1ull<<i);
-        for (size_t j = 0; j < l; ++j)
+        const std::size_t l = (1ull<<i);
+        for (std::size_t j = 0; j < l; ++j)
         {
             result.emplace_back(result[j] + basis[i]);
         }
@@ -49,7 +49,7 @@ std::vector<FieldT> batch_inverse_and_mul_internal(const std::vector<FieldT> &ve
     R.emplace_back(c);
 
     // Set R[i] to be the product of all vec[j], where j <= 0 <= i
-    for (size_t i = 1; i < vec.size(); ++i)
+    for (std::size_t i = 1; i < vec.size(); ++i)
     {
         c *= vec[i];
         R.emplace_back(c);
@@ -57,7 +57,7 @@ std::vector<FieldT> batch_inverse_and_mul_internal(const std::vector<FieldT> &ve
 
     FieldT c_inv = c.inverse() * k;
 
-    for (size_t i = vec.size()-1; i > 0; --i)
+    for (std::size_t i = vec.size()-1; i > 0; --i)
     {
         R[i] = R[i-1] * c_inv;
         c_inv *= vec[i];
@@ -79,7 +79,7 @@ std::vector<FieldT> batch_inverse_and_mul(const std::vector<FieldT> &vec, const 
     if (has_zeroes)
     {
         std::vector<FieldT> vec_copy(vec);
-        std::vector<size_t> zero_locations;
+        std::vector<std::size_t> zero_locations;
         FieldT zero = FieldT::zero();
         for (std::size_t i = 0; i < vec.size(); i++)
         {
@@ -120,7 +120,7 @@ void mut_batch_inverse(std::vector<FieldT> &vec)
     vec_copy[0] = c;
 
     // Set R[i] to be the product of all vec[j], where j <= 0 <= i
-    for (size_t i = 1; i < vec.size(); ++i)
+    for (std::size_t i = 1; i < vec.size(); ++i)
     {
         vec_copy[i] = vec[i];
         c *= vec[i];
@@ -129,7 +129,7 @@ void mut_batch_inverse(std::vector<FieldT> &vec)
 
     FieldT c_inv = c.inverse();
 
-    for (size_t i = vec.size()-1; i > 0; --i)
+    for (std::size_t i = vec.size()-1; i > 0; --i)
     {
         vec[i] = vec[i-1] * c_inv;
         c_inv *= vec_copy[i];
@@ -144,13 +144,13 @@ void mut_batch_inverse(std::vector<FieldT> &vec)
 template<typename T>
 void bitreverse_vector(std::vector<T> &a)
 {
-    const size_t n = a.size();
-    const size_t logn = libff::log2(n);
+    const std::size_t n = a.size();
+    const std::size_t logn = libff::log2(n);
     assert(n == 1ull<<logn);
 
-    for (size_t k = 0; k < n; ++k)
+    for (std::size_t k = 0; k < n; ++k)
     {
-        const size_t rk = libff::bitreverse(k, logn);
+        const std::size_t rk = libff::bitreverse(k, logn);
         if (k < rk)
         {
             std::swap(a[k], a[rk]);
