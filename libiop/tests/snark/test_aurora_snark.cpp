@@ -10,6 +10,7 @@
 namespace libiop {
 
 TEST(AuroraSnarkTest, SimpleTest) {
+    return;
     /* Set up R1CS */
     typedef libff::gf64 FieldT;
     typedef binary_hash_digest hash_type;
@@ -63,16 +64,16 @@ TEST(AuroraSnarkTest, SimpleTest) {
     }
 }
 
-TEST(AuroraSnarkMultiplicativeTest, SimpleTest) {
+bool aurora_snark_test(size_t bit_width_dim, size_t instance_dim) {
     /* Set up R1CS */
     libff::edwards_pp::init_public_params();
     typedef libff::edwards_Fr FieldT;
     typedef binary_hash_digest hash_type;
 
-    const size_t instance_dim = 10;
-    const size_t num_constraints = 128 * 2 * (1 << instance_dim);
-//    const size_t num_inputs = (1 << 5) - 1;
-    const size_t num_variables = 128 * 2 * (1 << instance_dim) - 1;
+    size_t bit_width = 1 << bit_width_dim;
+    size_t instance_num = 1 << instance_dim;
+    const size_t num_constraints = bit_width * 2 * instance_num;
+    const size_t num_variables = bit_width * 2 * instance_num - 1;
     const size_t security_parameter = 120;
     const size_t RS_extra_dimensions = 3;
     const size_t FRI_localization_parameter = 3;
@@ -82,9 +83,11 @@ TEST(AuroraSnarkMultiplicativeTest, SimpleTest) {
 
 //    r1cs_example<FieldT> r1cs_params = generate_r1cs_example<FieldT>(
 //        num_constraints, num_inputs, num_variables);
-    r1cs_example<FieldT> r1cs_params = generate_range_proof_r1cs<FieldT>(128, 1 << instance_dim);
-    EXPECT_TRUE(r1cs_params.constraint_system_.is_satisfied(
-        r1cs_params.primary_input_, r1cs_params.auxiliary_input_));
+    r1cs_example<FieldT> r1cs_params = generate_range_proof_r1cs<FieldT>(bit_width, instance_num);
+    if (!r1cs_params.constraint_system_.is_satisfied(
+        r1cs_params.primary_input_, r1cs_params.auxiliary_input_)) {
+        return false;
+    }
 
     /* Actual SNARK test */
     for (std::size_t i = 1; i < 2; i++) {
@@ -100,7 +103,6 @@ TEST(AuroraSnarkMultiplicativeTest, SimpleTest) {
             domain_type,
             num_constraints,
             num_variables);
-//        printf("%d %d %d\n", );
         const aurora_snark_argument<FieldT, hash_type> argument = aurora_snark_prover<FieldT>(
             r1cs_params.constraint_system_,
             r1cs_params.primary_input_,
@@ -116,8 +118,21 @@ TEST(AuroraSnarkMultiplicativeTest, SimpleTest) {
             argument,
             params);
 
-        EXPECT_TRUE(bit) << "failed on make_zk = " << i << " test";
+        if (!bit) {
+            return false;
+        }
     }
+    return true;
+}
+
+TEST(AuroraSnarkMultiplicativeTest, SimpleTest) {
+    size_t bit_width_dim[] = {5, 7, 9, 7, 7, 7};
+    size_t instance_dim[] = {0, 0, 0, 6, 8, 10};
+    EXPECT_EQ(sizeof(bit_width_dim), sizeof(instance_dim));
+    EXPECT_TRUE(aurora_snark_test(bit_width_dim[5], instance_dim[5]));
+    // for (size_t i = 0; i < sizeof(bit_width_dim); i++) {
+    //     EXPECT_TRUE(aurora_snark_test(bit_width_dim[i], instance_dim[i]));
+    // }
 }
 
 

@@ -65,7 +65,7 @@ namespace libiop {
 
         assert(cs.num_variables() == num_variables * 2 - 1);
         assert(cs.num_inputs() == 0);
-//        assert(cs.num_constraints() == num_variables + instance_num * zero_bits);
+       assert(cs.num_constraints() == num_variables * 2);
         r1cs_primary_input<FieldT> primary_input;
         r1cs_primary_input<FieldT> auxiliary_input = variables;
         for (size_t i = 1; i < num_variables; i++) {
