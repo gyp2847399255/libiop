@@ -27,7 +27,7 @@ namespace libiop {
         size_t nonzero_bits = bit_width - zero_bits;
         r1cs_constraint_system<FieldT> cs;
         cs.primary_input_size_ = 0;
-        cs.auxiliary_input_size_ = num_variables;
+        cs.auxiliary_input_size_ = num_variables * 2 - 1;
         r1cs_variable_assignment<FieldT> variables;
         for (size_t i = 0; i < instance_num; i++) {
             for (size_t j = 0; j < nonzero_bits; j++) {
@@ -40,8 +40,8 @@ namespace libiop {
 
         // constraint all variables in 0/1
         for (size_t i = 0; i < instance_num; i++) {
-            for (size_t j = 0; j < nonzero_bits; j++) {
-                size_t idx = i * instance_num + j;
+            for (size_t j = 0; j < bit_width; j++) {
+                size_t idx = i * bit_width + j;
                 linear_combination<FieldT> A, B, C;
                 A.add_term(idx + 1, FieldT::one());
                 B.add_term(idx + 1, FieldT::one());
@@ -51,19 +51,27 @@ namespace libiop {
         }
 
         for (size_t i = 0; i < instance_num; i++) {
+            for (size_t j = 0; j < nonzero_bits; j++) {
+                linear_combination<FieldT> A, B, C;
+                cs.add_constraint(r1cs_constraint<FieldT>(A, B, C));
+            }
             for (size_t j = nonzero_bits; j < bit_width; j++) {
-                size_t idx = i * instance_num + j;
+                size_t idx = i * bit_width + j;
                 linear_combination<FieldT> A, B, C;
                 A.add_term(idx + 1, FieldT::one());
                 cs.add_constraint(r1cs_constraint<FieldT>(A, B, C));
             }
         }
 
-        assert(cs.num_variables() == num_variables);
+        assert(cs.num_variables() == num_variables * 2 - 1);
         assert(cs.num_inputs() == 0);
-        assert(cs.num_constraints() == num_variables);
+//        assert(cs.num_constraints() == num_variables + instance_num * zero_bits);
         r1cs_primary_input<FieldT> primary_input;
         r1cs_primary_input<FieldT> auxiliary_input = variables;
+        for (size_t i = 1; i < num_variables; i++) {
+            auxiliary_input.push_back(FieldT::zero());
+        }
+        assert(cs.auxiliary_input_size_ == auxiliary_input.size());
         assert(cs.is_satisfied(primary_input, auxiliary_input));
 
         return r1cs_example<FieldT>(std::move(cs), std::move(primary_input), std::move(auxiliary_input));

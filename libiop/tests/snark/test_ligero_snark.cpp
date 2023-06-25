@@ -16,11 +16,11 @@ TEST(InterleavedR1CSSnarkTest, SimpleTest) {
     /* Set up R1CS */
     typedef libff::gf64 FieldT;
 
-    // std::size_t num_constraints = 16;
-    std::size_t constraint_dim = 17;
-    // std::size_t num_inputs = 8;
-    // std::size_t num_variables = 15;
-    // r1cs_example<FieldT> ex = generate_r1cs_example<FieldT>(num_constraints, num_inputs, num_variables);
+//    std::size_t num_constraints = 1 << 18;
+    std::size_t constraint_dim = 18;
+//    std::size_t num_inputs = 1 << 17;
+//    std::size_t num_variables = (1 << 18) - 1;
+//    r1cs_example<FieldT> ex = generate_r1cs_example<FieldT>(num_constraints, num_inputs, num_variables);
 
     r1cs_example<FieldT> ex = generate_range_proof_r1cs<FieldT>(128, 1024);
 
@@ -53,8 +53,6 @@ TEST(InterleavedR1CSSnarkTest, SimpleTest) {
 }
 
 TEST(InterleavedR1CSSnarkMultiplicativeTest, SimpleTest) {
-    printf("%s %d\n", __FILE__, __LINE__);
-    exit(0);
     /* Set up R1CS */
     libff::alt_bn128_pp::init_public_params();
     typedef libff::alt_bn128_Fr FieldT;

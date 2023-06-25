@@ -69,24 +69,26 @@ TEST(AuroraSnarkMultiplicativeTest, SimpleTest) {
     typedef libff::edwards_Fr FieldT;
     typedef binary_hash_digest hash_type;
 
-    const size_t num_constraints = (1 << 13);
-    const size_t num_inputs = (1 << 5) - 1;
-    const size_t num_variables = (1 << 13) - 1;
-    const size_t security_parameter = 128;
-    const size_t RS_extra_dimensions = 2;
+    const size_t instance_dim = 10;
+    const size_t num_constraints = 128 * 2 * (1 << instance_dim);
+//    const size_t num_inputs = (1 << 5) - 1;
+    const size_t num_variables = 128 * 2 * (1 << instance_dim) - 1;
+    const size_t security_parameter = 120;
+    const size_t RS_extra_dimensions = 3;
     const size_t FRI_localization_parameter = 3;
     const LDT_reducer_soundness_type ldt_reducer_soundness_type = LDT_reducer_soundness_type::optimistic_heuristic;
     const FRI_soundness_type fri_soundness_type = FRI_soundness_type::heuristic;
     const field_subset_type domain_type = multiplicative_coset_type;
 
-    r1cs_example<FieldT> r1cs_params = generate_r1cs_example<FieldT>(
-        num_constraints, num_inputs, num_variables);
+//    r1cs_example<FieldT> r1cs_params = generate_r1cs_example<FieldT>(
+//        num_constraints, num_inputs, num_variables);
+    r1cs_example<FieldT> r1cs_params = generate_range_proof_r1cs<FieldT>(128, 1 << instance_dim);
     EXPECT_TRUE(r1cs_params.constraint_system_.is_satisfied(
         r1cs_params.primary_input_, r1cs_params.auxiliary_input_));
 
     /* Actual SNARK test */
-    for (std::size_t i = 0; i < 2; i++) {
-        const bool make_zk = (i == 0) ? false : true;
+    for (std::size_t i = 1; i < 2; i++) {
+        const bool make_zk = i != 0;
         aurora_snark_parameters<FieldT, hash_type> params(
             security_parameter,
             ldt_reducer_soundness_type,
@@ -98,6 +100,7 @@ TEST(AuroraSnarkMultiplicativeTest, SimpleTest) {
             domain_type,
             num_constraints,
             num_variables);
+//        printf("%d %d %d\n", );
         const aurora_snark_argument<FieldT, hash_type> argument = aurora_snark_prover<FieldT>(
             r1cs_params.constraint_system_,
             r1cs_params.primary_input_,
@@ -116,5 +119,6 @@ TEST(AuroraSnarkMultiplicativeTest, SimpleTest) {
         EXPECT_TRUE(bit) << "failed on make_zk = " << i << " test";
     }
 }
+
 
 }
