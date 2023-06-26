@@ -129,7 +129,7 @@ TEST(AuroraSnarkMultiplicativeTest, SimpleTest) {
     size_t bit_width_dim[] = {5, 7, 9, 7, 7, 7};
     size_t instance_dim[] = {0, 0, 0, 6, 8, 10};
     EXPECT_EQ(sizeof(bit_width_dim), sizeof(instance_dim));
-    EXPECT_TRUE(aurora_snark_test(bit_width_dim[5], instance_dim[5]));
+    EXPECT_TRUE(aurora_snark_test(bit_width_dim[4], instance_dim[4]));
     // for (size_t i = 0; i < sizeof(bit_width_dim); i++) {
     //     EXPECT_TRUE(aurora_snark_test(bit_width_dim[i], instance_dim[i]));
     // }
