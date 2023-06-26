@@ -72,8 +72,8 @@ bool aurora_snark_test(size_t bit_width_dim, size_t instance_dim) {
 
     size_t bit_width = 1 << bit_width_dim;
     size_t instance_num = 1 << instance_dim;
-    const size_t num_constraints = bit_width * 2 * instance_num;
-    const size_t num_variables = bit_width * 2 * instance_num - 1;
+    const size_t num_constraints = bit_width * 16 * instance_num;
+    const size_t num_variables = instance_num * bit_width * 8 - 1;
     const size_t security_parameter = 120;
     const size_t RS_extra_dimensions = 3;
     const size_t FRI_localization_parameter = 3;

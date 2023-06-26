@@ -18,7 +18,7 @@ TEST(InterleavedR1CSSnarkTest, SimpleTest) {
     typedef libff::gf64 FieldT;
 
 //    std::size_t num_constraints = 1 << 18;
-    std::size_t constraint_dim = 18;
+    std::size_t constraint_dim = 20;
 //    std::size_t num_inputs = 1 << 17;
 //    std::size_t num_variables = (1 << 18) - 1;
 //    r1cs_example<FieldT> ex = generate_r1cs_example<FieldT>(num_constraints, num_inputs, num_variables);
@@ -61,7 +61,7 @@ bool ligero_snark_test(size_t bit_width_dim, size_t instance_dim) {
     size_t bit_width = 1 << bit_width_dim;
     size_t instance_num = 1 << instance_dim;
     // std::size_t num_constraints = 16;
-    std::size_t constraint_dim = bit_width_dim + instance_dim + 1;
+    std::size_t constraint_dim = bit_width_dim + instance_dim + 3;
     // std::size_t num_inputs = 8;
     // std::size_t num_variables = 15;
     // r1cs_example<FieldT> ex = generate_r1cs_example<FieldT>(num_constraints, num_inputs, num_variables);
@@ -98,7 +98,7 @@ TEST(InterleavedR1CSSnarkMultiplicativeTest, SimpleTest) {
     size_t bit_width_dim[] = {5, 7, 9, 7, 7, 7};
     size_t instance_dim[] = {0, 0, 0, 6, 8, 10};
     EXPECT_EQ(sizeof(bit_width_dim), sizeof(instance_dim));
-    EXPECT_TRUE(ligero_snark_test(bit_width_dim[5], instance_dim[5]));
+    EXPECT_TRUE(ligero_snark_test(bit_width_dim[2], instance_dim[2]));
 }
 
 }
