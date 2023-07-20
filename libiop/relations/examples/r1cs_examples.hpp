@@ -58,8 +58,10 @@ r1cs_example<FieldT> generate_r1cs_example(const size_t num_constraints,
                                            const size_t num_variables);
 
 template<typename FieldT>
-    r1cs_example<FieldT> generate_range_proof_r1cs(const size_t bit_width, const size_t instance_num);
+    r1cs_example<FieldT> generate_fixed_range_proof_r1cs(const size_t bit_width, const size_t instance_num);
     
+template<typename FieldT>
+    r1cs_example<FieldT> generate_arbitrary_range_proof_r1cs(const size_t bit_width, const size_t instance_num);
 } // libiop
 
 #include "libiop/relations/examples/r1cs_examples.tcc"
